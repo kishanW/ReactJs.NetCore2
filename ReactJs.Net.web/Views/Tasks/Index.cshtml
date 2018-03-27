@@ -1,0 +1,41 @@
+﻿@{
+    ViewData["Title"] = "Info";
+}
+<div class="row">
+    <div class="col-lg-4">
+        <h2>Tasks</h2>
+        <table class="table table-striped table-bordered">
+            <thead>
+            <tr>
+                <th>Status</th>
+                <th>Name</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td></td>
+                <td></td>
+            </tr>
+            </tbody>
+        </table>
+        
+    </div>
+    
+    <div class="col-lg-4">
+        <h2>Users</h2>
+        <div id="taskusers"></div>
+        <div id="content"></div>
+    </div>
+    
+</div>
+@section scripts{
+    
+    <script>
+        var taskapp = {
+            gettaskusers: "@Url.Action("TaskUsers")"
+        };
+        
+    </script>
+    
+    <script src="~/jsx/tasksapp.jsx"></script>
+}
