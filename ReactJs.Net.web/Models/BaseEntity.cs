@@ -1,9 +1,11 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ReactJs.Net.web.Models
 {
     public class BaseEntity
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public Guid Id { get; set; }
         public DateTime CreatedOn { get; set; }
         public string CreatedBy { get; set; }

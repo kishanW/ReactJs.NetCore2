@@ -1,31 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Extensions.Internal;
 using ReactJs.Net.web.Data;
+using ReactJs.Net.web.Models.Tasks;
 
 namespace ReactJs.Net.web.Controllers
 {
-    public class TasksController:Controller
+    public class TasksController : Controller
     {
         private readonly TaskDbContext _taskDbContext;
 
-        public TasksController(TaskDbContext taskDbContext)
-        {
-            _taskDbContext = taskDbContext;
-        }
+        public TasksController(TaskDbContext taskDbContext) { _taskDbContext = taskDbContext; }
 
 
         public IActionResult Index()
         {
-            //magic here
-
             return View();
         }
 
-        
+
         [HttpGet]
         public IActionResult Get(Guid? id)
         {
@@ -41,40 +35,90 @@ namespace ReactJs.Net.web.Controllers
         [HttpGet]
         public IActionResult TaskUsers()
         {
-            var taskUsers = _taskDbContext.TaskUsers.Select(x=> new
-                                                                {
-                                                                    Key = x.Id,
-                                                                    FirstName = x.FirstName,
-                                                                    LastName = x.LastName,
-                                                                    EmailAddress = x.EmailAddress,
-                                                                    NumberOfTasks = DateTime.Now.Second
-                                                                });
-            var rand = new Random(DateTime.Now.Second);
-            var randomNum = rand.Next(1, 100);
-            var testItems = new List<Test>();
-            for (var i = 0; i < 10; i++)
-            {
-                var testItem = new Test
-                               {
-                                   Key = Guid.NewGuid(),
-                                   FirstName = $"TestUser{i}",
-                                   LastName = $"LastName{i}",
-                                   EmailAddress = $"{rand.Next(1, 100)}@gmail.com",
-                                   NumberOfTasks = rand.Next(1, 100)
-                };
-                testItems.Add(testItem);
-            }
+            var taskUserEntities = _taskDbContext.TaskUsers
+                                                 .Include(x=> x.UserTasks)
+                                                 .ToList();
+            var returnList = taskUserEntities
+                .OrderByDescending(x=> x.CreatedOn)
+                .Select(x => new TaskUserViewModel
+                             {
+                                 Id = x.Id,
+                                 FirstName = x.FirstName,
+                                 LastName = x.LastName,
+                                 EmailAddress = x.EmailAddress,
+                                 NumberOfTasks = x.UserTasks.Count
+                             })
+                .ToList();
 
-            return Json(testItems.ToArray());
+            return Json(returnList.ToArray());
+        }
+
+        [HttpPost]
+        public IActionResult AddTaskUser(TaskUserViewModel taskUserViewModel)
+        {
+            var newTaskUser = new TaskUserEntity
+                              {
+                                  CreatedBy = User.Identity.Name ?? "system",
+                                  FirstName = taskUserViewModel.FirstName,
+                                  LastName = taskUserViewModel.LastName,
+                                  EmailAddress = taskUserViewModel.EmailAddress
+                              };
+
+            _taskDbContext.TaskUsers.Add(newTaskUser);
+            _taskDbContext.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+
+
+        [HttpPost]
+        public IActionResult AddTaskForUser(TaskViewModel taskViewModel)
+        {
+            var taskUser = _taskDbContext.TaskUsers.FirstOrDefault(x => x.Id == taskViewModel.AssignedTo.GetValueOrDefault());
+            var newTask = new TaskEntity
+                              {
+                                  CreatedBy = User.Identity.Name ?? "system",
+                                  Name = taskViewModel.TaskName,
+                                  Description = taskViewModel.TaskDescription,
+                                  AssignedTo = taskUser.Id,
+                                  TaskStatus = TaskStatusEnum.New,
+                                  DueOn = taskViewModel.DueOn
+                              };
+            _taskDbContext.Tasks.Add(newTask);
+
+            if (taskUser != null)
+            {
+                var userTask = new UserTaskEntity
+                               {
+                                   TaskUser = taskUser,
+                                   Task = newTask
+                               };
+                _taskDbContext.UserTasks.Add(userTask);
+            }
+            
+            _taskDbContext.SaveChanges();
+            return RedirectToAction("Index");
         }
     }
 
-    public class Test
+
+    public class TaskUserViewModel
     {
-        public Guid Key { get; set; }
-        public string FirstName{ get; set; }
-        public string LastName{ get; set; }
-        public string EmailAddress{ get; set; }
+        public Guid? Id { get; set; }
+        public string EmailAddress { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
         public int NumberOfTasks { get; set; }
+    }
+
+
+    public class TaskViewModel
+    {
+        public Guid? Id { get; set; }
+        public DateTime? DueOn { get; set; }
+        public string TaskName { get; set; }
+        public string TaskDescription { get; set; }
+        public TaskStatusEnum TaskStatus { get; set; }
+        public Guid? AssignedTo { get; set; }
     }
 }

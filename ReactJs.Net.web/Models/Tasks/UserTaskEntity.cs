@@ -4,7 +4,7 @@ namespace ReactJs.Net.web.Models.Tasks
 {
     public class UserTaskEntity:BaseEntity
     {
-        public Guid TaskUserId { get; set; }
-        public Guid TaskId { get; set; }
+        public TaskUserEntity TaskUser { get; set; }
+        public TaskEntity Task { get; set; }
     }
 }
