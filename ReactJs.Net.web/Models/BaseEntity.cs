@@ -5,7 +5,7 @@ namespace ReactJs.Net.web.Models
 {
     public class BaseEntity
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
         public DateTime CreatedOn { get; set; }
         public string CreatedBy { get; set; }

@@ -22,7 +22,6 @@ namespace ReactJs.Net.web.Data
             {
                 var taskUser = new TaskUserEntity
                                {
-                                   Id = Guid.NewGuid(),
                                    CreatedOn = DateTime.Now,
                                    EmailAddress = $"{DateTime.Today:MMddyy}U{i+1}@gmail.com",
                                    FirstName = $"TaskUser",

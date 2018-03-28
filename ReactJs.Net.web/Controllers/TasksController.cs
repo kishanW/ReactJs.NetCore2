@@ -80,11 +80,12 @@ namespace ReactJs.Net.web.Controllers
                                   CreatedBy = User.Identity.Name ?? "system",
                                   Name = taskViewModel.TaskName,
                                   Description = taskViewModel.TaskDescription,
-                                  AssignedTo = taskUser.Id,
+                                  AssignedTo = taskUser?.Id,
                                   TaskStatus = TaskStatusEnum.New,
                                   DueOn = taskViewModel.DueOn
                               };
             _taskDbContext.Tasks.Add(newTask);
+            _taskDbContext.SaveChanges();
 
             if (taskUser != null)
             {
