@@ -51,10 +51,10 @@ var TaskUsersTable = React.createClass({
     }
 });
 
-taskapp.taskUserTableElem = ReactDOM.render(
+/*taskapp.taskUserTableElem = ReactDOM.render(
     <TaskUsersTable pollInterval="3000"/>,
     document.getElementById('taskusers')
-);
+);*/
 
 
 var AddTaskForm = React.createClass({
@@ -106,7 +106,7 @@ var AddTaskForm = React.createClass({
 });
 
 
-taskapp.addTaskFormElem = ReactDOM.render(
+/*taskapp.addTaskFormElem = ReactDOM.render(
     <AddTaskForm pollInterval="3000" />,
     document.getElementById('addTaskForm')
-);
+);*/

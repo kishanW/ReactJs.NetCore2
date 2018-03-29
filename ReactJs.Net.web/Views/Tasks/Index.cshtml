@@ -1,7 +1,9 @@
-﻿@{
+﻿@using ReactJs.Net.web.Extensions
+@{
     ViewData["Title"] = "Info";
 }
 <div class="row">
+    
     <div class="col-lg-4">
         <h2>Things to do</h2>
         <div class="panel panel-primary">
@@ -11,15 +13,15 @@
                 {
                     <div class="form-group">
                         <label class="control-label">First Name</label>
-                        <input type="text" name="FirstName" placeholder="First name" class="form-control" />
+                        <input type="text" name="FirstName" placeholder="First name" class="form-control"/>
                     </div>
                     <div class="form-group">
                         <label class="control-label">Last Name</label>
-                        <input type="text" name="LastName" placeholder="Last name" class="form-control" />
+                        <input type="text" name="LastName" placeholder="Last name" class="form-control"/>
                     </div>
                     <div class="form-group">
                         <label class="control-label">Email address</label>
-                        <input type="email" name="EmailAddress" placeholder="abc@def.com" class="form-control" />
+                        <input type="email" name="EmailAddress" placeholder="abc@def.com" class="form-control"/>
                     </div>
 
                     <div class="form-group">
@@ -29,17 +31,17 @@
                 }
             </div>
         </div>
-        
-        
+
+
         <div class="panel panel-primary">
             <div class="panel-heading">Add Task</div>
             <div class="panel-body" id="addTaskForm">
-                
+
             </div>
         </div>
 
     </div>
-    
+
     <div class="col-lg-4">
         <h2>Users</h2>
         <div class="panel panel-primary">
@@ -49,8 +51,16 @@
             </div>
         </div>
     </div>
-    
+
+
+    <div class="col-lg-4">
+
+    </div>
+
 </div>
+
+
+
 @section scripts{
 
     <script>
@@ -59,30 +69,33 @@
             addtaskurl: "@Url.Action("AddTaskForUser")",
             userUpdateInterval: 3000
         };
+    </script>
 
-
+    <script src="~/jsx/tasksapp.jsx"></script>
+    @Html.RenderReactComponent("TaskUsersTable", "taskusers", null, "taskapp.TaskUsersTable")
+    @Html.RenderReactComponent("AddTaskForm", "addTaskForm", null, "taskapp.AddTaskForm")
+    
+    
+    <script>
+        
         taskapp.GetUsersFromServer = function() {
-
-            console.log("trying to get data from server");
+            
             $.ajax({
                     url: taskapp.gettaskusers,
                     type: "GET"
                 })
                 .done(function(data) {
-                    console.log("success");
-                    taskapp.taskUserTableElem.setState({ taskUsers: data });
-                    taskapp.addTaskFormElem.setState({ taskUsers: data });
+                    taskapp.TaskUsersTable.setState({ taskUsers: data });
+                    taskapp.AddTaskForm.setState({ taskUsers: data });
                 })
-                .fail(function() {
-                    console.log("error");
+                .fail(function(e) {
+                    console.log(e);
                 });
+            
         }
-
 
         $(document).ready(function() {
             window.setInterval(function () { taskapp.GetUsersFromServer()}, taskapp.userUpdateInterval);
         });
     </script>
-
-    <script src="~/jsx/tasksapp.jsx"></script>
 }
