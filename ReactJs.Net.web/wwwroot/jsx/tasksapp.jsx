@@ -5,6 +5,7 @@
     
     https://reactjs.net/getting-started/tutorial.html
 */
+
 var TaskUser = React.createClass({
     render: function() {
         return (
@@ -25,27 +26,13 @@ var TaskUser = React.createClass({
 });
 
 var TaskUsersTable = React.createClass({
-    getUsersFromServer: function () {
-        //we can conver this into anything
-        var xhr = new XMLHttpRequest();
-        xhr.open('get', taskapp.gettaskusers, true);
-        xhr.onload = function () {
-            var data = JSON.parse(xhr.responseText);
-
-            //most important function call!
-            this.setState({ taskUsers: data });
-            
-        }.bind(this);
-        xhr.send();
-    },
 
     getInitialState: function () {
         return { taskUsers: [] };
     },
 
     componentDidMount: function () {
-        this.getUsersFromServer();
-        window.setInterval(this.getUsersFromServer, this.props.pollInterval);
+        
     },
 
 
@@ -64,35 +51,20 @@ var TaskUsersTable = React.createClass({
     }
 });
 
-ReactDOM.render(
+taskapp.taskUserTableElem = ReactDOM.render(
     <TaskUsersTable pollInterval="3000"/>,
     document.getElementById('taskusers')
 );
 
 
 var AddTaskForm = React.createClass({
-    getUsersFromServer: function() {
-        //we can conver this into anything
-        var xhr = new XMLHttpRequest();
-        xhr.open('get', taskapp.gettaskusers, true);
-        xhr.onload = function() {
-            var data = JSON.parse(xhr.responseText);
-
-            //most important function call!
-            this.setState({ taskUsers: data });
-
-        }.bind(this);
-        xhr.send();
-    },
-
 
     getInitialState: function() {
         return { taskUsers: [] };
     },
 
     componentDidMount: function() {
-        this.getUsersFromServer();
-        window.setInterval(this.getUsersFromServer, this.props.pollInterval);
+        
     },
 
 
@@ -134,10 +106,7 @@ var AddTaskForm = React.createClass({
 });
 
 
-
-//addTaskForm
-
-ReactDOM.render(
+taskapp.addTaskFormElem = ReactDOM.render(
     <AddTaskForm pollInterval="3000" />,
     document.getElementById('addTaskForm')
 );

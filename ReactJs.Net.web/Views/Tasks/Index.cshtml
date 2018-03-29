@@ -52,14 +52,37 @@
     
 </div>
 @section scripts{
-    
+
     <script>
         var taskapp = {
             gettaskusers: "@Url.Action("TaskUsers")",
-            addtaskurl: "@Url.Action("AddTaskForUser")"
+            addtaskurl: "@Url.Action("AddTaskForUser")",
+            userUpdateInterval: 3000
         };
-        
+
+
+        taskapp.GetUsersFromServer = function() {
+
+            console.log("trying to get data from server");
+            $.ajax({
+                    url: taskapp.gettaskusers,
+                    type: "GET"
+                })
+                .done(function(data) {
+                    console.log("success");
+                    taskapp.taskUserTableElem.setState({ taskUsers: data });
+                    taskapp.addTaskFormElem.setState({ taskUsers: data });
+                })
+                .fail(function() {
+                    console.log("error");
+                });
+        }
+
+
+        $(document).ready(function() {
+            window.setInterval(function () { taskapp.GetUsersFromServer()}, taskapp.userUpdateInterval);
+        });
     </script>
-    
+
     <script src="~/jsx/tasksapp.jsx"></script>
 }
