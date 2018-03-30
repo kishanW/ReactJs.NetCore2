@@ -100,6 +100,50 @@ namespace ReactJs.Net.web.Controllers
             _taskDbContext.SaveChanges();
             return RedirectToAction("Index");
         }
+
+        public IActionResult GetTasks()
+        {
+            var tasks = _taskDbContext.Tasks.ToList();
+            var returnList = tasks
+                .OrderByDescending(x => x.CreatedOn)
+                .Select(x => new TaskViewModel
+                {
+                                 Id = x.Id,
+                                 DueOn = x.DueOn,
+                                 TaskName = x.Name,
+                                 TaskDescription = x.Description,
+                                 TaskStatus= x.TaskStatus
+                             })
+                .ToList();
+
+            return Json(returnList.ToArray());
+        }
+
+        public IActionResult DeleteUser(Guid id)
+        {
+            var taskUser = _taskDbContext.TaskUsers
+                                         .Include(x => x.UserTasks)
+                                         .FirstOrDefault(x => x.Id == id);
+
+
+            if (taskUser == null)
+            {
+                return NotFound();
+            }
+
+            var userTasks = taskUser.UserTasks.ToList();
+            
+            foreach (var userTask in userTasks)
+            {
+                _taskDbContext.UserTasks.Remove(userTask);
+            }
+            _taskDbContext.SaveChanges();
+
+            _taskDbContext.TaskUsers.Remove(taskUser);
+            _taskDbContext.SaveChanges();
+
+            return Ok();
+        }
     }
 
 

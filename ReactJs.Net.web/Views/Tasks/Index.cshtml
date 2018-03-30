@@ -44,19 +44,15 @@
 
     <div class="col-lg-4">
         <h2>Users</h2>
-        <div class="panel panel-primary">
-            <div class="panel-heading">Existing Users</div>
-            <div class="panel-body" id="taskusers">
-                Loading...
-            </div>
-        </div>
+        <div id="taskusers"></div>
     </div>
 
 
     <div class="col-lg-4">
-
+        <h2>Widgets</h2>
+        <div id="widget1"></div>
+        <div id="widget2"></div>
     </div>
-
 </div>
 
 
@@ -67,14 +63,18 @@
         var taskapp = {
             gettaskusers: "@Url.Action("TaskUsers")",
             addtaskurl: "@Url.Action("AddTaskForUser")",
-            userUpdateInterval: 3000
+            gettasksurk: "@Url.Action("GetTasks")",
+            deletetaskuserurl: "@Url.Action("DeleteUser")",
+            userUpdateInterval: 3000,
+            taskUpdateInterval: 5000
         };
     </script>
 
     <script src="~/jsx/tasksapp.jsx"></script>
     @Html.RenderReactComponent("TaskUsersTable", "taskusers", null, "taskapp.TaskUsersTable")
     @Html.RenderReactComponent("AddTaskForm", "addTaskForm", null, "taskapp.AddTaskForm")
-    
+    @Html.RenderReactComponent("CounterWidget", "widget1", new { widgetName = "User Count"}, "taskapp.Widget1")
+    @Html.RenderReactComponent("CounterWidget", "widget2", new { widgetName = "Tasks" }, "taskapp.Widget2")
     
     <script>
         
@@ -87,6 +87,7 @@
                 .done(function(data) {
                     taskapp.TaskUsersTable.setState({ taskUsers: data });
                     taskapp.AddTaskForm.setState({ taskUsers: data });
+                    taskapp.Widget1.setState({ count: data.length });
                 })
                 .fail(function(e) {
                     console.log(e);
@@ -94,8 +95,24 @@
             
         }
 
+        taskapp.GetTasksFromServer = function () {
+
+            $.ajax({
+                url: taskapp.gettasksurk,
+                type: "GET"
+            })
+                .done(function (data) {
+                    taskapp.Widget2.setState({ count: data.length });
+                })
+                .fail(function (e) {
+                    console.log(e);
+                });
+
+        }
+
         $(document).ready(function() {
-            window.setInterval(function () { taskapp.GetUsersFromServer()}, taskapp.userUpdateInterval);
+            window.setInterval(function () { taskapp.GetUsersFromServer() }, taskapp.userUpdateInterval);
+            window.setInterval(function () { taskapp.GetTasksFromServer() }, taskapp.taskUpdateInterval);
         });
     </script>
 }

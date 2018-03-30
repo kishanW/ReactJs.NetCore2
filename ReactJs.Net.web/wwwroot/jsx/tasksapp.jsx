@@ -7,25 +7,51 @@
 */
 
 var TaskUser = React.createClass({
-    render: function() {
+    removeUserHandlerChild: function () {
+        console.log("removeUserHandler CHILD - " + this.props.userid);
+        this.props.removeUserHandler(this.props.userid);
+    },
+    
+    render: function () {
         return (
-            <li className="list-group-item" key={this.props.userid}>
-                <h4 className="list-group-item-heading">
-                    {this.props.firstName} {this.props.lastName}
-                </h4>
+            <li key={this.props.userid} data-taskuser data-user-id={this.props.userid}>
+                <div data-remove-taskuser onClick={this.removeUserHandlerChild}>
+                    <i className="fas fa-times-circle"></i>
+                </div>
 
-                <p className="list-group-item-text">
-                    <ul>
-                        <li>Email: {this.props.emailAddress}</li>
-                        <li>Number of Tasks: {this.props.numberOfTasks}</li>
-                    </ul>
-                </p>
+                <div data-user-info>
+                    <div data-user-name>
+                        {this.props.firstName} {this.props.lastName}
+                    </div>
+
+                    <div data-user-info-list>
+                        <ul>
+                            <li><span>Email</span> <span>{this.props.emailAddress}</span></li>
+                            <li><span>Tasks</span> <span>{this.props.numberOfTasks}</span></li>
+                        </ul>
+                    </div>
+                </div>
             </li>
         );
     }
 });
 
 var TaskUsersTable = React.createClass({
+
+    removeUserHandler: function(userId) {
+        console.log("removeUserHandler PARENT - " + userId);
+
+        $.ajax(taskapp.deletetaskuserurl,
+            {
+                type: "POST",
+                data: {
+                    id: userId
+                },
+                success: function () {
+                    
+                }
+            });
+    },
 
     getInitialState: function () {
         return { taskUsers: [] };
@@ -34,28 +60,20 @@ var TaskUsersTable = React.createClass({
     componentDidMount: function () {
         
     },
-
-
-    
     
     render: function () {
-        var taskUsersNodes = this.state.taskUsers.map(function(user) {
-            return (<TaskUser key={user.id} userid={user.id} firstName={user.firstName} lastName={user.lastName} emailAddress={user.emailAddress} numberOfTasks={user.numberOfTasks}/>);
+        var removeUserHandle = this.removeUserHandler;
+        var taskUsersNodes = this.state.taskUsers.map(function (user) {
+            return (<TaskUser removeUserHandler={removeUserHandle} key={user.id} userid={user.id} firstName={user.firstName} lastName={user.lastName} emailAddress={user.emailAddress} numberOfTasks={user.numberOfTasks}/>);
         });
 
         return (
-            <ul className="list-group">
+            <ul data-taskusers>
                 {taskUsersNodes}
             </ul>
         );
     }
 });
-
-/*taskapp.taskUserTableElem = ReactDOM.render(
-    <TaskUsersTable pollInterval="3000"/>,
-    document.getElementById('taskusers')
-);*/
-
 
 var AddTaskForm = React.createClass({
 
@@ -106,7 +124,27 @@ var AddTaskForm = React.createClass({
 });
 
 
-/*taskapp.addTaskFormElem = ReactDOM.render(
-    <AddTaskForm pollInterval="3000" />,
-    document.getElementById('addTaskForm')
-);*/
+var CounterWidget = React.createClass({
+    getInitialState: function () {
+        return {
+            widgetName: "Counter Widget",
+            count: 0
+        };
+    },
+
+    componentDidMount: function () {
+
+    },
+
+    render: function() {
+        return (
+            <div className="countWidget">
+                <div className="count">{this.state.count}</div>
+                <div className="name">{this.props.widgetName}</div>
+            </div>
+            );
+    }
+});
+
+
+
