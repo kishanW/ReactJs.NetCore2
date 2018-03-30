@@ -112,8 +112,11 @@ namespace ReactJs.Net.web.Controllers
                                  DueOn = x.DueOn,
                                  TaskName = x.Name,
                                  TaskDescription = x.Description,
-                                 TaskStatus= x.TaskStatus
-                             })
+                                 TaskStatus= x.TaskStatus,
+                    AssignedTo = x.AssignedTo,
+                    AssignedToName = "not supported yet",
+                    StatusString = Enum.GetName(typeof(TaskStatusEnum), x.TaskStatus)
+                })
                 .ToList();
 
             return Json(returnList.ToArray());
@@ -144,6 +147,32 @@ namespace ReactJs.Net.web.Controllers
 
             return Ok();
         }
+
+        public IActionResult DeleteTask(Guid id)
+        {
+            
+
+            var task = _taskDbContext.Tasks.FirstOrDefault(x => x.Id == id);
+            if (task == null)
+            {
+                return NotFound();
+            }
+
+            var userTasks = _taskDbContext.UserTasks
+                                          .Include(x => x.Task)
+                                          .ToList();
+
+            foreach (var userTask in userTasks)
+            {
+                _taskDbContext.UserTasks.Remove(userTask);
+            }
+            _taskDbContext.SaveChanges();
+
+            _taskDbContext.Tasks.Remove(task);
+            _taskDbContext.SaveChanges();
+
+            return Ok();
+        }
     }
 
 
@@ -165,5 +194,7 @@ namespace ReactJs.Net.web.Controllers
         public string TaskDescription { get; set; }
         public TaskStatusEnum TaskStatus { get; set; }
         public Guid? AssignedTo { get; set; }
+        public string AssignedToName { get; set; }
+        public string StatusString { get; set; }
     }
 }

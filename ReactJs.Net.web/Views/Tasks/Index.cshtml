@@ -3,8 +3,13 @@
     ViewData["Title"] = "Info";
 }
 <div class="row">
+    <div class="col-lg-3">
+        <h2>Widgets</h2>
+        <div id="widget1"></div>
+        <div id="widget2"></div>
+    </div>
     
-    <div class="col-lg-4">
+    <div class="col-lg-3">
         <h2>Things to do</h2>
         <div class="panel panel-primary">
             <div class="panel-heading">Add User</div>
@@ -42,17 +47,16 @@
 
     </div>
 
-    <div class="col-lg-4">
+    <div class="col-lg-3">
         <h2>Users</h2>
         <div id="taskusers"></div>
     </div>
 
-
-    <div class="col-lg-4">
-        <h2>Widgets</h2>
-        <div id="widget1"></div>
-        <div id="widget2"></div>
+    <div class="col-lg-3">
+        <h2>Tasks</h2>
+        <div id="taskslist"></div>
     </div>
+    
 </div>
 
 
@@ -65,13 +69,15 @@
             addtaskurl: "@Url.Action("AddTaskForUser")",
             gettasksurk: "@Url.Action("GetTasks")",
             deletetaskuserurl: "@Url.Action("DeleteUser")",
+            deletetaskurl: "@Url.Action("DeleteTask")",
             userUpdateInterval: 3000,
-            taskUpdateInterval: 5000
+            taskUpdateInterval: 3000
         };
     </script>
 
     <script src="~/jsx/tasksapp.jsx"></script>
     @Html.RenderReactComponent("TaskUsersTable", "taskusers", null, "taskapp.TaskUsersTable")
+    @Html.RenderReactComponent("TasksList", "taskslist", null, "taskapp.TasksList")
     @Html.RenderReactComponent("AddTaskForm", "addTaskForm", null, "taskapp.AddTaskForm")
     @Html.RenderReactComponent("CounterWidget", "widget1", new { widgetName = "User Count"}, "taskapp.Widget1")
     @Html.RenderReactComponent("CounterWidget", "widget2", new { widgetName = "Tasks" }, "taskapp.Widget2")
@@ -103,6 +109,7 @@
             })
                 .done(function (data) {
                     taskapp.Widget2.setState({ count: data.length });
+                    taskapp.TasksList.setState({ tasks: data});
                 })
                 .fail(function (e) {
                     console.log(e);
