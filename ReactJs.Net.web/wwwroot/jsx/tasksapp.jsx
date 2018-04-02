@@ -106,6 +106,7 @@ var AddTaskForm = React.createClass({
                 <div className="form-group">
                     <label className="control-label">Assign to user</label>
                     <select className="form-control" name="AssignedTo">
+                        <option>Select User</option>
                         {taskUsersNodes}
                     </select>
                 </div>
