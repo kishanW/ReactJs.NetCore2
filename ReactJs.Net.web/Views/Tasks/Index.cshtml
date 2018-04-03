@@ -8,7 +8,7 @@
         <div id="widget1"></div>
         <div id="widget2"></div>
     </div>
-    
+
     <div class="col-lg-3">
         <h2>Things to do</h2>
         <div class="panel panel-primary">
@@ -37,7 +37,7 @@
         <h2>Tasks</h2>
         <div id="taskslist"></div>
     </div>
-    
+
 </div>
 
 
@@ -56,30 +56,38 @@
         };
     </script>
 
-    <script src="~/jsx/tasksapp.jsx"></script>
+    <script src="~/jsx/tasks_addForm.jsx"></script>
+    <script src="~/jsx/tasks_list.jsx"></script>
+    <script src="~/jsx/widget_counter.jsx"></script>
+    <script src="~/jsx/task_usersList.jsx"></script>
+
+    @Html.RenderReactComponent("CounterWidget", "widget1", new { widgetName = "User Count" }, "taskapp.Widget1")
+    @Html.RenderReactComponent("CounterWidget", "widget2", new { widgetName = "Tasks" }, "taskapp.Widget2")
+
+    @Html.RenderReactComponent("AddTaskForm", "addTaskForm", null, "taskapp.AddTaskForm")
+
     @Html.RenderReactComponent("TaskUsersTable", "taskusers", null, "taskapp.TaskUsersTable")
     @Html.RenderReactComponent("TasksList", "taskslist", null, "taskapp.TasksList")
-    @Html.RenderReactComponent("AddTaskForm", "addTaskForm", null, "taskapp.AddTaskForm")
-    @Html.RenderReactComponent("CounterWidget", "widget1", new { widgetName = "User Count"}, "taskapp.Widget1")
-    @Html.RenderReactComponent("CounterWidget", "widget2", new { widgetName = "Tasks" }, "taskapp.Widget2")
-    
+
+
+
     <script>
-        
-        taskapp.GetUsersFromServer = function() {
-            
+
+        taskapp.GetUsersFromServer = function () {
+
             $.ajax({
-                    url: taskapp.gettaskusers,
-                    type: "GET"
-                })
-                .done(function(data) {
+                url: taskapp.gettaskusers,
+                type: "GET"
+            })
+                .done(function (data) {
                     taskapp.TaskUsersTable.setState({ taskUsers: data });
                     taskapp.AddTaskForm.setState({ taskUsers: data });
                     taskapp.Widget1.setState({ count: data.length });
                 })
-                .fail(function(e) {
+                .fail(function (e) {
                     console.log(e);
                 });
-            
+
         }
 
         taskapp.GetTasksFromServer = function () {
@@ -90,7 +98,7 @@
             })
                 .done(function (data) {
                     taskapp.Widget2.setState({ count: data.length });
-                    taskapp.TasksList.setState({ tasks: data});
+                    taskapp.TasksList.setState({ tasks: data });
                 })
                 .fail(function (e) {
                     console.log(e);
@@ -98,9 +106,10 @@
 
         }
 
-        $(document).ready(function() {
+        $(document).ready(function () {
             window.setInterval(function () { taskapp.GetUsersFromServer() }, taskapp.userUpdateInterval);
             window.setInterval(function () { taskapp.GetTasksFromServer() }, taskapp.taskUpdateInterval);
         });
+
     </script>
 }
