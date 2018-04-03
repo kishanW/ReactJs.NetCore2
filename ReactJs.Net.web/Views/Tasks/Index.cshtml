@@ -14,26 +14,7 @@
         <div class="panel panel-primary">
             <div class="panel-heading">Add User</div>
             <div class="panel-body">
-                @using (Html.BeginForm("AddTaskUser", "Tasks", null, FormMethod.Post))
-                {
-                    <div class="form-group">
-                        <label class="control-label">First Name</label>
-                        <input type="text" name="FirstName" placeholder="First name" class="form-control"/>
-                    </div>
-                    <div class="form-group">
-                        <label class="control-label">Last Name</label>
-                        <input type="text" name="LastName" placeholder="Last name" class="form-control"/>
-                    </div>
-                    <div class="form-group">
-                        <label class="control-label">Email address</label>
-                        <input type="email" name="EmailAddress" placeholder="abc@def.com" class="form-control"/>
-                    </div>
-
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-primary">Add User</button>
-                    </div>
-
-                }
+                @Html.Partial("AddUserForm")
             </div>
         </div>
 
