@@ -204,3 +204,97 @@ a[class^=btn]:hover {
     color: #AAB2BD;
     display: flex;
 }
+
+
+
+/*
+    task list
+*/
+
+
+
+ul[data-tasks] {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    width: 100%;
+}
+
+li[data-task] {
+    background-color: #fff;
+    border-radius: 0;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+    display: flex;
+    margin-top: 5px;
+    overflow: hidden;
+    padding: 0;
+    width: 100%;
+}
+
+    li[data-task] > [data-remove-task] {
+        display: flex;
+        flex-grow: 1;
+        
+        align-items: center;
+        background-color: #ED5565;
+        cursor: pointer;
+        justify-content: center;
+    }
+
+        li[data-task] > [data-remove-task]:hover,
+        li[data-task] > [data-remove-task]:focus {
+            background-color: #DA4453;
+        }
+
+        li[data-task] > [data-remove-task] .fa-times-circle {
+            color: #fff;
+            display: flex;
+            font-size: 20px;
+            justify-content: center;
+        }
+
+
+li[data-task] > [data-task-info] {
+    display: flex;
+    flex-grow: 2;
+    flex-direction: column;
+}
+
+    li[data-task] [data-task-info] > [data-task-name] {
+        display: flex;
+        font-family: 'Roboto Slab', serif;
+        font-size: 16px;
+        font-weight: 700;
+        padding: 10px 0;
+        padding-left: 10px;
+        text-transform: capitalize;
+        width: 100%;
+    }
+
+    li[data-task] [data-task-info] ul {
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+        width: 100%;
+    }
+
+        li[data-task] [data-task-info] ul li {
+            display: flex;
+            padding: 5px 0;
+            width: 100%;
+        }
+li[data-task] [data-task-info] ul li:not(:last-child) {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+    li[data-task] [data-task-info] ul li span:first-child {
+        display: flex;
+        font-weight: 500;
+        margin-right: 10px;
+        padding-left: 10px;
+    }
+
+li[data-task] [data-task-info] ul li span:last-child {
+        color: #AAB2BD;
+        display: flex;
+    }

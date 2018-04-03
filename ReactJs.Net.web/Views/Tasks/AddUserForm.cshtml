@@ -1,0 +1,106 @@
+﻿@using ReactJs.Net.web.Extensions
+@{
+    ViewData["Title"] = "Info";
+}
+<div class="row">
+    <div class="col-lg-3">
+        <h2>Widgets</h2>
+        <div id="widget1"></div>
+        <div id="widget2"></div>
+    </div>
+    
+    <div class="col-lg-3">
+        <h2>Things to do</h2>
+        <div class="panel panel-primary">
+            <div class="panel-heading">Add User</div>
+            <div class="panel-body">
+                @Html.Partial("AddUserForm")
+            </div>
+        </div>
+
+
+        <div class="panel panel-primary">
+            <div class="panel-heading">Add Task</div>
+            <div class="panel-body" id="addTaskForm">
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="col-lg-3">
+        <h2>Users</h2>
+        <div id="taskusers"></div>
+    </div>
+
+    <div class="col-lg-3">
+        <h2>Tasks</h2>
+        <div id="taskslist"></div>
+    </div>
+    
+</div>
+
+
+
+@section scripts{
+
+    <script>
+        var taskapp = {
+            gettaskusers: "@Url.Action("TaskUsers")",
+            addtaskurl: "@Url.Action("AddTaskForUser")",
+            gettasksurk: "@Url.Action("GetTasks")",
+            deletetaskuserurl: "@Url.Action("DeleteUser")",
+            deletetaskurl: "@Url.Action("DeleteTask")",
+            userUpdateInterval: 3000,
+            taskUpdateInterval: 3000
+        };
+    </script>
+
+    <script src="~/jsx/tasksapp.jsx"></script>
+    @Html.RenderReactComponent("TaskUsersTable", "taskusers", null, "taskapp.TaskUsersTable")
+    @Html.RenderReactComponent("TasksList", "taskslist", null, "taskapp.TasksList")
+    @Html.RenderReactComponent("AddTaskForm", "addTaskForm", null, "taskapp.AddTaskForm")
+    @Html.RenderReactComponent("CounterWidget", "widget1", new { widgetName = "User Count"}, "taskapp.Widget1")
+    @Html.RenderReactComponent("CounterWidget", "widget2", new { widgetName = "Tasks" }, "taskapp.Widget2")
+    
+    <script>
+        
+        taskapp.GetUsersFromServer = function() {
+            
+            $.ajax({
+                    url: taskapp.gettaskusers,
+                    type: "GET"
+                })
+                .done(function(data) {
+                    taskapp.TaskUsersTable.setState({ taskUsers: data });
+                    taskapp.AddTaskForm.setState({ taskUsers: data });
+                    taskapp.Widget1.setState({ count: data.length });
+                })
+                .fail(function(e) {
+                    console.log(e);
+                });
+            
+        }
+
+        taskapp.GetTasksFromServer = function () {
+
+            $.ajax({
+                url: taskapp.gettasksurk,
+                type: "GET"
+            })
+                .done(function (data) {
+                    taskapp.Widget2.setState({ count: data.length });
+                    taskapp.TasksList.setState({ tasks: data});
+                })
+                .fail(function (e) {
+                    console.log(e);
+                });
+
+        }
+
+        $(document).ready(function() {
+            window.setInterval(function () { taskapp.GetUsersFromServer() }, taskapp.userUpdateInterval);
+            window.setInterval(function () { taskapp.GetTasksFromServer() }, taskapp.taskUpdateInterval);
+        });
+    </script>
+}
